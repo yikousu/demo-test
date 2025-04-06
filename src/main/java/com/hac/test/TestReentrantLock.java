@@ -18,7 +18,7 @@ public class TestReentrantLock {
     /**
      * cnt 可以不用 volatile 修饰，在加锁场景下其实可有可无（因为有锁，保证可见性）。
      */
-    static int cnt = 0;
+    static volatile int cnt = 0;
 
     /**
      * 加锁
@@ -69,7 +69,7 @@ public class TestReentrantLock {
      *
      * @param args
      */
-    public static void main(String[] args) throws InterruptedException {
+    public static void main4(String[] args) throws InterruptedException {
         int threads = 5;
         // 使用 CountDownLatch 确保主线程等待所有子线程完成
         CountDownLatch latch = new CountDownLatch(threads);
@@ -99,6 +99,34 @@ public class TestReentrantLock {
                 LOCK.unlock();
             }
         }
+    }
+
+    /**
+     * volatile 不能保证复合操作的原子性
+     * 例如 cnt++ 操作，它包含读、改、写三个步骤
+     * volatile 只能保证读和写的可见性，但不能保证这三个步骤作为一个原子操作执行
+     *
+     * @param args
+     * @throws InterruptedException
+     */
+    public static void main(String[] args) throws InterruptedException {
+        for (int i = 0; i < 5; i++) {
+            POOL.submit(() -> {
+                try {
+                    addOneWithOutLock();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+
+        POOL.shutdown();
+        POOL.awaitTermination(1, TimeUnit.SECONDS);
+
+
+        // volatile 不能保证复合操作的原子性
+        // cnt 用 volatile 修饰也没用  结果随机的，不一定是5
+        System.out.println("最终结果:" + cnt);
     }
 
     public static void addOneWithOutLock() throws InterruptedException {
