@@ -35,9 +35,13 @@ public class TestThread {
      * @param args
      * @throws InterruptedException
      */
-    public static void main1(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException {
         MyThread thread = new MyThread();
         // 新开一个线程
+        thread.start();
+        // 点进去start方法看源码
+        // if (threadStatus != 0)
+        //     throw new IllegalThreadStateException();
         thread.start();
         System.out.println(Thread.currentThread().getName());
         // 等待子线程执行完毕
@@ -89,7 +93,7 @@ public class TestThread {
      *
      * @param args
      */
-    public static void main(String[] args) {
+    public static void main4(String[] args) {
         // Runnable
         pool.submit(() -> {
             System.out.println("当前线程:" + Thread.currentThread().getName());
