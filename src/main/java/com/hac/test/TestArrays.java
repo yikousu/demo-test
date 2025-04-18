@@ -1,4 +1,4 @@
-package com.hac;
+package com.hac.test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
